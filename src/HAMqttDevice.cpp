@@ -59,31 +59,55 @@ HAMqttDevice& HAMqttDevice::enableCommandTopic()
     return *this;
 }
 
-HAMqttDevice& HAMqttDevice::enableStateTopic()
+HAMqttDevice& HAMqttDevice::enableStateTopic(const String& topic="~/state")
 {
-    static bool firstCall = true;
-
-    if(firstCall)
+    bool firstCall = true;
+    
+    String name = "stat_t";
+    for (uint8_t i = 0 ; i < _configVars.size() ; i++)
     {
-        addConfigVar("stat_t", "~/state");
-        firstCall = false;
-    }
+        if(_configVars[i].key==name) {
+            firstCall = false;
+        }
+    }    
     return *this;
 }
 
-HAMqttDevice& HAMqttDevice::enableAttributesTopic()
+HAMqttDevice& HAMqttDevice::enableAttributesTopic(const String& topic="~/attr")
 {
-    static bool firstCall = true;
+    bool firstCall = true;
 
-    if(firstCall)
+    String name = "json_attr_t";
+    
+    for (uint8_t i = 0 ; i < _configVars.size() ; i++)
     {
-        addConfigVar("json_attr_t", "~/attr");
-        firstCall = false;
+        if(_configVars[i].key==name) {
+            firstCall = false;
+        }
     }
-
+    
+    if(firstCall) {
+        addConfigVar(name, topic);
+    }
+    
     return *this;
 }
 
+
+HAMqttDevice& HAMqttDevice::enableAvailabilityTopic(const String& name="~/availability")
+{
+    bool firstCall = true;
+    for (uint8_t i = 0 ; i < _configVars.size() ; i++)
+    {
+        if(_configVars[i].key==name) {
+            firstCall = false;
+        }
+    }
+    if(firstCall) {
+        addConfigVar("avty_t", name);
+    }
+    return *this;
+}
 
 HAMqttDevice& HAMqttDevice::addConfigVar(const String& name, const String& value)
 {
